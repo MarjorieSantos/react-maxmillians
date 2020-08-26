@@ -6,8 +6,8 @@ import './App.css';
 class App extends Component {
   state = {
     persons: [
-      { name: "marjorie", age: 18 },
-      { name: 'nat', age: 29 }
+      { id: 'aaafaf', name: "marjorie", age: 18 },
+      { id: 'asafdf', name: 'nat', age: 29 }
     ],
     showPersons: false
   }
@@ -21,13 +21,23 @@ class App extends Component {
     })
   }
 
-  nameChangeHandle = (event) => {
-    this.setState({
-      persons: [
-        { name: "ellen", age: 25 },
-        { name: event.target.value, age: 22 }
-      ],
-    })
+  nameChangeHandle = (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
+    });
+
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person
+    //outra forma 
+    // const person = Object.assign({}, this.state.persons[personIndex])
+
+    this.setState({ persons: persons })
   }
 
   togglePersonHandler = () => {
@@ -36,7 +46,6 @@ class App extends Component {
   }
 
   deletePersonsHandler = (personIndex) => {
-    // const persons = this.state.persons.slice();
     const persons = [...this.state.persons.slice()];
     persons.splice(personIndex, 1);
     this.setState({ persons: persons })
@@ -58,9 +67,11 @@ class App extends Component {
         <div>
           {this.state.persons.map((person, index) => {
             return <Person
-              click={this.deletePersonsHandler}
+              click={() => this.deletePersonsHandler(index)}
               name={person.name}
               age={person.age}
+              key={person.id}
+              onchange={(event) => this.nameChangeHandle(event, person.id)}
             />
           })}
         </div>
